@@ -25,4 +25,5 @@ build-logic/*
 
 # Allow other
 !README.md
-!LICENSE
+!LICENSE.ssh_key
+.ssh_key.pub

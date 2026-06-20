@@ -13,6 +13,7 @@ public class RoundedRectRenderer {
     private static final String SHADER_NAME = "rounded_rect";
     private static int vao = -1;
     private static int vbo = -1;
+    private static int ebo = -1;
     private static boolean initialized = false;
 
     private static final float[] QUAD_VERTICES = {
@@ -34,7 +35,7 @@ public class RoundedRectRenderer {
 
         vao = GL30.glGenVertexArrays();
         vbo = GL20.glGenBuffers();
-        int ebo = GL20.glGenBuffers();
+        ebo = GL20.glGenBuffers();
 
         GL30.glBindVertexArray(vao);
 
@@ -97,6 +98,10 @@ public class RoundedRectRenderer {
         if (vbo != -1) {
             GL20.glDeleteBuffers(vbo);
             vbo = -1;
+        }
+        if (ebo != -1) {
+            GL20.glDeleteBuffers(ebo);
+            ebo = -1;
         }
         initialized = false;
     }

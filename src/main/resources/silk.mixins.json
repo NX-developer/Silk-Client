@@ -6,7 +6,7 @@
     "ChatScreenMixin",
     "ClientPlayerInteractionManagerMixin",
     "EntityMixin",
-    "ExampleMixin",
+
     "GameRendererMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
@@ -19,7 +19,7 @@
     "MouseMixin",
     "PlayerEntityMixin",
     "ScreenMixin",
-    "WorldRendererMixin"
+
   ],
   "injectors": {
     "defaultRequire": 1

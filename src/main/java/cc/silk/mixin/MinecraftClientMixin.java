@@ -7,8 +7,6 @@ import cc.silk.event.impl.player.ItemUseEvent;
 import cc.silk.utils.IMinecraft;
 import cc.silk.event.impl.player.TickEvent;
 import cc.silk.event.impl.world.WorldChangeEvent;
-import cc.silk.gui.ClickGui;
-import cc.silk.module.modules.client.ClickGUIModule;
 import cc.silk.module.modules.client.Client;
 import cc.silk.profiles.ProfileManager;
 import net.minecraft.client.MinecraftClient;
@@ -48,7 +46,7 @@ public class MinecraftClientMixin implements IMinecraft {
         if (optionalClientModule.isPresent()) {
             Client client = optionalClientModule.get();
             if (client.isEnabled() && client.getTitle()) {
-                cir.setReturnValue("Silk 1.21.1");
+                cir.setReturnValue("Silk 1.21.4");
             }
         }
     }
@@ -68,17 +66,6 @@ public class MinecraftClientMixin implements IMinecraft {
         if (world != null) {
             SilkClient.INSTANCE.getSilkEventBus().post(new TickEvent());
         }
-
-        var optionalClickGuiModule = SilkClient.INSTANCE.getModuleManager().getModule(ClickGUIModule.class);
-        if (optionalClickGuiModule.isPresent()) {
-            ClickGUIModule clickGuiModule = optionalClickGuiModule.get();
-            if (clickGuiModule.isEnabled() && SilkClient.mc.currentScreen == null && world != null) {
-                SilkClient.mc.setScreen(new ClickGui());
-            }
-            else if (!clickGuiModule.isEnabled() && SilkClient.mc.currentScreen instanceof ClickGui) {
-                SilkClient.mc.setScreen(null);
-            }
-        }
     }
 
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
@@ -94,8 +81,10 @@ public class MinecraftClientMixin implements IMinecraft {
         } catch (Throwable ignored) {
         }
 
-        DoAttackEvent event = new DoAttackEvent();
-        SilkClient.INSTANCE.getSilkEventBus().post(event);
+        if (SilkClient.INSTANCE != null) {
+            DoAttackEvent event = new DoAttackEvent();
+            SilkClient.INSTANCE.getSilkEventBus().post(event);
+        }
     }
 
     @Inject(method = "stop", at = @At("HEAD"))
@@ -114,11 +103,14 @@ public class MinecraftClientMixin implements IMinecraft {
     }
     @Inject(method = "onDisconnected", at = @At("HEAD"))
     public final void onDisconnected(CallbackInfo ci) {
-        DisconnectEvent event = new DisconnectEvent();
-        SilkClient.INSTANCE.getSilkEventBus().post(event);
+        if (SilkClient.INSTANCE != null) {
+            DisconnectEvent event = new DisconnectEvent();
+            SilkClient.INSTANCE.getSilkEventBus().post(event);
+        }
     }
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     public final void doItemUseInject(CallbackInfo ci) {
+        if (SilkClient.INSTANCE == null) return;
         ItemUseEvent event = new ItemUseEvent();
 
         SilkClient.INSTANCE.getSilkEventBus().post(event);

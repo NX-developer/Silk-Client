@@ -97,7 +97,7 @@ public class OutlineESP extends Module {
     }
 
     private boolean shouldRender(Entity entity) {
-        if (mc.player.distanceTo(entity) > range.getValue())
+        if (mc.player == null || mc.player.distanceTo(entity) > range.getValue())
             return false;
 
         if (entity instanceof PlayerEntity player) {
@@ -120,7 +120,7 @@ public class OutlineESP extends Module {
     }
 
     private boolean isTeammate(PlayerEntity player) {
-        if (mc.player.getScoreboardTeam() == null || player.getScoreboardTeam() == null) {
+        if (mc.player == null || mc.player.getScoreboardTeam() == null || player.getScoreboardTeam() == null) {
             return false;
         }
         return mc.player.getScoreboardTeam().equals(player.getScoreboardTeam());

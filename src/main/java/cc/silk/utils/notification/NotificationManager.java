@@ -3,14 +3,14 @@ package cc.silk.utils.notification;
 import cc.silk.module.Module;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class NotificationManager {
     private static final NotificationManager INSTANCE = new NotificationManager();
     private static final long DEFAULT_DURATION = 3000;
     @Getter
-    private final List<Notification> notifications = new ArrayList<>();
+    private final List<Notification> notifications = new CopyOnWriteArrayList<>();
 
     public static NotificationManager getInstance() {
         return INSTANCE;
@@ -32,5 +32,9 @@ public class NotificationManager {
         String message = buffName;
         Notification notification = new Notification(title, message, Notification.NotificationType.BUFF_EXPIRED, DEFAULT_DURATION);
         notifications.add(notification);
+    }
+
+    public void cleanup() {
+        notifications.removeIf(Notification::isExpired);
     }
 }

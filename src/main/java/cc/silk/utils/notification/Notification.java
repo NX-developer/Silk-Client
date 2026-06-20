@@ -30,7 +30,7 @@ public class Notification {
 
     public float getLifetimeProgress() {
         long elapsed = System.currentTimeMillis() - creationTime;
-        return Math.min(1f, (float) elapsed / duration);
+        return duration <= 0 ? 1f : Math.min(1f, (float) elapsed / duration);
     }
 
     public enum NotificationType {

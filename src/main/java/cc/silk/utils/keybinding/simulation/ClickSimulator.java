@@ -5,10 +5,20 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import static cc.silk.SilkClient.shouldUseMouseEvent;
 
 @UtilityClass
 public final class ClickSimulator {
+    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "Silk-ClickSimulator");
+        t.setDaemon(true);
+        return t;
+    });
+
     public static void leftClick() {
         if (shouldUseMouseEvent) {
             User32.INSTANCE.mouse_event(User32.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -22,13 +32,7 @@ public final class ClickSimulator {
             KeyBinding.setKeyPressed(key, true);
             KeyBinding.onKeyPressed(key);
 
-            new Thread(() -> {
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException ignored) {
-                }
-                KeyBinding.setKeyPressed(key, false);
-            }).start();
+            EXECUTOR.schedule(() -> KeyBinding.setKeyPressed(key, false), 30, TimeUnit.MILLISECONDS);
 
         }
     }

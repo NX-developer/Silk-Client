@@ -20,8 +20,8 @@ import java.lang.invoke.MethodHandles;
 public final class SilkClient implements ClientModInitializer {
     public static final String CLIENT_VERSION = "v1.0";
     public static final boolean shouldUseMouseEvent = System.getProperty("os.name").toLowerCase().contains("windows");
-    public static SilkClient INSTANCE;
-    public static MinecraftClient mc;
+    public static volatile SilkClient INSTANCE;
+    public static volatile MinecraftClient mc;
     public final IEventBus SilkEventBus;
     public final ModuleManager moduleManager;
     public final FontManager fontManager;
@@ -43,7 +43,7 @@ public final class SilkClient implements ClientModInitializer {
         this.notificationManager = NotificationManager.getInstance();
 
         SilkEventBus.subscribe(mouseModuleHandler);
-        SilkEventBus.subscribe(notificationManager);
+
         new Thread(() -> {
             try {
                 ModMenuHider.hideFromModMenu();

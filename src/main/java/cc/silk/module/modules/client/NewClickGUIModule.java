@@ -10,7 +10,7 @@ import java.awt.Color;
 public class NewClickGUIModule extends Module {
 
     public NewClickGUIModule() {
-        super("NewClickGUI", "Modern NanoVG-based ClickGUI", GLFW.GLFW_KEY_RIGHT_SHIFT, Category.CLIENT);
+        super("NewClickGUI", "Modern NanoVG-based ClickGUI", -1, Category.CLIENT);
     }
 
     @Override

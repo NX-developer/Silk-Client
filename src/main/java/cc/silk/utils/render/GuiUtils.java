@@ -94,7 +94,7 @@ public final class GuiUtils {
 
     public static void drawButton(DrawContext context, int x, int y, int width, int height,
                                   String text, boolean hovered, boolean pressed) {
-        Color bgColor = pressed ? Colors.BACKGROUND_LIGHT :
+        Color bgColor = pressed ? Colors.BORDER_DARK :
                 hovered ? Colors.BACKGROUND_LIGHT : Colors.BACKGROUND_DARK;
 
         RenderUtils.drawSmoothRoundedRect(context, x, y, width, height, 6, bgColor.getRGB());

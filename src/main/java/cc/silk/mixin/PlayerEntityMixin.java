@@ -37,7 +37,9 @@ public class PlayerEntityMixin {
 
     @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V"), cancellable = true)
     private void attackInject(Entity target, CallbackInfo ci) {
+        if (SilkClient.INSTANCE == null) return;
         Optional<KeepSprint> keep = SilkClient.INSTANCE.getModuleManager().getModule(KeepSprint.class);
+        if (keep.isEmpty()) return;
         KeepSprint keepSprint = keep.get();
         if (keepSprint.isEnabled()) {
             ci.cancel();

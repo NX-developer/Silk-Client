@@ -90,7 +90,7 @@ public final class ChatUtil implements IMinecraft {
         final MutableText mutableText = Text.empty();
 
         for (int i = 0; i < text.length(); i++) {
-            final float percent = (float) i / (text.length() - 1);
+            final float percent = text.length() <= 1 ? 0f : (float) i / (text.length() - 1);
             final Color color = ColorUtils.colorInterpolate(startColor, endColor, percent);
 
             mutableText.append(Text.literal(String.valueOf(text.charAt(i))).setStyle(style.withColor(TextColor.fromRgb(color.getRGB()))));

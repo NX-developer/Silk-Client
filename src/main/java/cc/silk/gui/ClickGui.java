@@ -49,8 +49,7 @@ public final class ClickGui extends Screen {
     private final FontRenderer titleFont;
     private final FontRenderer regularFont;
     private final FontRenderer smallFont;
-    private final float typedTitleElapsed = 0f;
-    private final long lastCursorBlink = 0;
+    private long lastCursorBlink = 0;
     private final List<String> configs = new ArrayList<>();
     private String configName = "";
     private boolean configNameFocused = false;
@@ -184,7 +183,7 @@ public final class ClickGui extends Screen {
         applyAlpha(theme.panelBg(), 220).getRGB());
     smallFont.drawString(matrices, clippedText, textX, textY - 4, textColor);
 
-        if (eventHandler.isSearchFocused() && !eventHandler.getSearchQuery().isEmpty()) {
+        if (eventHandler.isSearchFocused()) {
             long currentTime = System.currentTimeMillis();
             if ((currentTime - lastCursorBlink) % 1000 < 500) {
                 int cursorX = textX + (int) smallFont.getStringWidth(clippedText);
@@ -346,7 +345,7 @@ public final class ClickGui extends Screen {
         Color textColor = configName.isEmpty() ? applyAlpha(theme.muted(), 180) : theme.text();
         regularFont.drawString(matrices, displayText, x + PADDING + 8, currentY + 8, textColor);
 
-        if (configNameFocused && !configName.isEmpty()) {
+        if (configNameFocused) {
             long currentTime = System.currentTimeMillis();
             if ((currentTime - lastCursorBlink) % 1000 < 500) {
                 int cursorX = x + PADDING + 8 + (int) regularFont.getStringWidth(configName);

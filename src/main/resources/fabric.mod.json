@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "id": "silk",
   "version": "${version}",
-  "name": "motionblurr",
-  "description": "Motion Blur for fabric",
+  "name": "Silk",
+  "description": "A free Minecraft client mod with combat, movement, render, and utility modules",
   "contact": {
-    "sources": "https://github.com/Noryea/motionblur-fabric",
-    "issues": "https://github.com/Noryea/motionblur-fabric/issues"
+    "sources": "https://github.com/hitomdev/Silkcc",
+    "issues": "https://github.com/hitomdev/Silkcc/issues"
   },
   "license": "CC0-1.0",
   "icon": "assets/silk/icon.png",

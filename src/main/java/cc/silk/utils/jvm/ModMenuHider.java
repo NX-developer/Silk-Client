@@ -70,6 +70,7 @@ public final class ModMenuHider {
             }
 
         } catch (IOException e) {
+            System.err.println("[Silk] Failed to write modmenu config: " + e.getMessage());
         }
     }
 }

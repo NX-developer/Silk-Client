@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LightmapTextureManagerMixin {
     @Inject(method = "getBrightness", at = @At("HEAD"), cancellable = true)
     private static void setBrightness(CallbackInfoReturnable<Float> ci) {
-        if (SilkClient.INSTANCE.moduleManager.getModule(FullBright.class).get().isEnabled()) ci.setReturnValue(1.0F);
+        if (SilkClient.INSTANCE == null) return;
+        var opt = SilkClient.INSTANCE.moduleManager.getModule(FullBright.class);
+        if (opt.isPresent() && opt.get().isEnabled()) ci.setReturnValue(1.0F);
     }
 }

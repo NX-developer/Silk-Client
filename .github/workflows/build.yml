@@ -1,59 +1,68 @@
-name: "Build and publish project"
-on: [ push, workflow_dispatch ]
+name: Build & Error Report
 
-permissions:
-  contents: write
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
         with:
-          fetch-depth: 0
+          java-version: '21'
+          distribution: 'temurin'
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v3
-        with:
-          allow-snapshots: true
-        continue-on-error: true
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
 
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: "graalvm"
-          java-version: 21
-          cache: gradle
-
-      - name: Build project
-        run: ./gradlew build --no-daemon
-        timeout-minutes: 10
-
-      - name: Capture build artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: build-artifacts
-          path: build/libs/*.jar
-          if-no-files-found: error
-
-      - name: Receive commit hash
-        id: vars
+      - name: Build with Gradle
+        id: build
         run: |
-          echo "GITHUB_SHA_SHORT=$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
-          VERSION=$(./gradlew properties -q | grep "^version:" | awk '{print $2}' | tr -d '\n')
-          echo "BUILD_VERSION=$VERSION" >> $GITHUB_ENV
+          ./gradlew build 2>&1 | tee build-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
+      - name: Capture errors to error.txt
+        if: always()
+        run: |
+          if [ -f build-output.txt ]; then
+            # Extract error lines
+            grep -i -E "(error|FAILURE|BUILD FAILED|exception|compilation)" build-output.txt > error.txt || true
+            # If no errors found, add success message
+            if [ ! -s error.txt ]; then
+              echo "BUILD SUCCESSFUL - No errors found" > error.txt
+            fi
+          else
+            echo "Build output file not found" > error.txt
+          fi
+
+      - name: Upload error.txt
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ env.GITHUB_SHA_SHORT }}
-          name: "Build ${{ env.BUILD_VERSION }}-${{ env.GITHUB_SHA_SHORT }}"
-          files: build/libs/*.jar
-          prerelease: ${{ github.ref != 'refs/heads/main' }}
-          make_latest: ${{ github.ref == 'refs/heads/main' }}
-          target_commitish: ${{ github.sha }}
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: error-report
+          path: error.txt
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mod-artifacts
+          path: build/libs/
+
+      - name: Fail if build failed
+        if: steps.build.outputs.exit_code != '0'
+        run: |
+          echo "BUILD FAILED - check error.txt artifact"
+          cat error.txt
+          exit 1

@@ -1,11 +1,11 @@
 package cc.silk.utils.friend;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FriendManager {
-    private static final Set<UUID> friends = new HashSet<>();
+    private static final Set<UUID> friends = ConcurrentHashMap.newKeySet();
 
     public static void addFriend(UUID uuid) {
         friends.add(uuid);
