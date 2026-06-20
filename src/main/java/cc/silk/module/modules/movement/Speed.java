@@ -10,13 +10,12 @@ import meteordevelopment.orbit.EventHandler;
 public final class Speed extends Module {
     private static final ModeSetting mode = new ModeSetting("Mode", "Strafe", "Strafe", "Vanilla", "Bhop");
     private static final NumberSetting speed = new NumberSetting("Speed", 0.1, 5.0, 1.5, 0.1);
-    private static final NumberSetting timerSpeed = new NumberSetting("Timer", 0.8, 2.0, 1.08, 0.01);
     private static final NumberSetting jumpHeight = new NumberSetting("Jump Height", 0.1, 1.0, 0.42, 0.01);
     private boolean jumped = false;
 
     public Speed() {
         super("Speed", "Increases movement speed", -1, Category.MOVEMENT);
-        addSettings(mode, speed, timerSpeed, jumpHeight);
+        addSettings(mode, speed, jumpHeight);
     }
 
     @EventHandler
@@ -70,7 +69,6 @@ public final class Speed extends Module {
 
     private void handleVanilla() {
         mc.player.setMovementSpeed((float) (speed.getValue() * 0.1));
-        mc.options.timerKey.setPressed(timerSpeed.getValue() > 1.0);
     }
 
     private void handleBhop() {

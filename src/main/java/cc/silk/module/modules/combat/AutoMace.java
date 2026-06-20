@@ -507,7 +507,7 @@ public final class AutoMace extends Module {
         float pitch = (float) Math.toDegrees(-Math.atan2(diff.y, Math.sqrt(diff.x * diff.x + diff.z * diff.z)));
 
         mc.player.setYaw(yaw);
-        mc.player.setPitch(MathHelper.clamp(pitch, -90, 90));
+        mc.player.setPitch(MathHelper.clamp(pitch, -90f, 90f));
     }
 
     private float getRotationSpeed() {
@@ -517,7 +517,10 @@ public final class AutoMace extends Module {
     // ─── Anti-Cheat Bypass Helpers ───────────────────────────────────────────
     private void updatePing() {
         if (mc.player != null && mc.getNetworkHandler() != null) {
-            cachedPing = mc.getNetworkHandler().getPing();
+            var entry = mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
+            if (entry != null) {
+                cachedPing = entry.getLatency();
+            }
         }
     }
 

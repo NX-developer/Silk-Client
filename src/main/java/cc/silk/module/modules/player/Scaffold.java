@@ -470,8 +470,11 @@ public final class Scaffold extends Module {
     private void updatePing() {
         long now = System.currentTimeMillis();
         if (now - lastPingUpdate > 1000) {
-            if (mc.getNetworkHandler() != null) {
-                cachedPing = mc.getNetworkHandler().getPing();
+            if (mc.getNetworkHandler() != null && mc.player != null) {
+                var entry = mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
+                if (entry != null) {
+                    cachedPing = entry.getLatency();
+                }
             }
             lastPingUpdate = now;
         }

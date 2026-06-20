@@ -53,7 +53,7 @@ public final class ProfileManager {
         try (FileReader reader = new FileReader(profileFile, StandardCharsets.UTF_8)) {
             final JsonObject json = gson.fromJson(reader, JsonObject.class);
             if (json != null) {
-                for (Module module : moduleManager.getModules() != null ? moduleManager.getModules() : Collections.emptyList()) {
+                for (Module module : moduleManager.getModules()) {
                     if (module != null && json.has(module.getName())) {
                         final JsonObject moduleJson = json.getAsJsonObject(module.getName());
                         if (moduleJson != null) loadModuleSettings(module, moduleJson);

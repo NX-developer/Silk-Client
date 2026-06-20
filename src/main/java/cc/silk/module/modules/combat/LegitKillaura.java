@@ -13,6 +13,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Tameable;
 import net.minecraft.entity.passive.PassiveEntity;
@@ -223,12 +224,12 @@ public final class LegitKillaura extends Module {
         BlockState hitState = mc.world.getBlockState(hitPos);
 
         // Water is transparent - always ignore for line of sight
-        if (hitState.getFluidState().isOf(Blocks.WATER)) {
+        if (hitState.getFluidState().isOf(Fluids.WATER)) {
             return true;
         }
 
         // Lava is opaque - always blocks line of sight
-        if (hitState.getFluidState().isOf(Blocks.LAVA)) {
+        if (hitState.getFluidState().isOf(Fluids.LAVA)) {
             return false;
         }
 
@@ -243,11 +244,9 @@ public final class LegitKillaura extends Module {
 
     private boolean isTransparentBlock(BlockState state) {
         return state.isOf(Blocks.GLASS) || state.isOf(Blocks.GLASS_PANE)
-                || state.isOf(Blocks.STAINED_GLASS) || state.isOf(Blocks.STAINED_GLASS_PANE)
                 || state.isOf(Blocks.ICE) || state.isOf(Blocks.PACKED_ICE)
                 || state.isOf(Blocks.BARRIER) || state.isOf(Blocks.LIGHT)
                 || state.isOf(Blocks.SEA_LANTERN) || state.isOf(Blocks.GLOWSTONE)
-                || state.isOf(Blocks.LEAVES) || state.isOf(Blocks.LEAVES2)
                 || state.isOf(Blocks.OAK_LEAVES) || state.isOf(Blocks.SPRUCE_LEAVES)
                 || state.isOf(Blocks.BIRCH_LEAVES) || state.isOf(Blocks.JUNGLE_LEAVES)
                 || state.isOf(Blocks.ACACIA_LEAVES) || state.isOf(Blocks.DARK_OAK_LEAVES)
@@ -331,7 +330,7 @@ public final class LegitKillaura extends Module {
                 for (double y = box.minY; y <= box.maxY; y += 0.25) {
                     totalSamples++;
                     BlockPos pos = BlockPos.ofFloored(x, y, z);
-                    if (mc.world.getBlockState(pos).getFluidState().isOf(Blocks.LAVA)) {
+                    if (mc.world.getBlockState(pos).getFluidState().isOf(Fluids.LAVA)) {
                         lavaSamples++;
                     }
                 }
@@ -349,7 +348,7 @@ public final class LegitKillaura extends Module {
             for (double z = box.minZ; z <= box.maxZ; z += 0.25) {
                 for (double y = box.minY; y <= box.maxY; y += 0.25) {
                     BlockPos pos = BlockPos.ofFloored(x, y, z);
-                    if (mc.world.getBlockState(pos).getFluidState().isOf(Blocks.LAVA)) {
+                    if (mc.world.getBlockState(pos).getFluidState().isOf(Fluids.LAVA)) {
                         return true;
                     }
                 }
@@ -388,7 +387,7 @@ public final class LegitKillaura extends Module {
     private boolean isPointInLava(Vec3d point) {
         if (mc.world == null) return false;
         BlockPos pos = BlockPos.ofFloored(point);
-        return mc.world.getBlockState(pos).getFluidState().isOf(Blocks.LAVA);
+        return mc.world.getBlockState(pos).getFluidState().isOf(Fluids.LAVA);
     }
 
     private boolean isPointVisible(Vec3d point) {
@@ -410,10 +409,10 @@ public final class LegitKillaura extends Module {
         BlockState hitState = mc.world.getBlockState(hitPos);
 
         // Water is transparent - ignore
-        if (hitState.getFluidState().isOf(Blocks.WATER)) return true;
+        if (hitState.getFluidState().isOf(Fluids.WATER)) return true;
 
         // Lava blocks visibility - opaque
-        if (hitState.getFluidState().isOf(Blocks.LAVA)) return false;
+        if (hitState.getFluidState().isOf(Fluids.LAVA)) return false;
 
         // Transparent blocks (glass, etc.) - allow visibility
         if (isTransparentBlock(hitState)) return true;
@@ -601,8 +600,11 @@ public final class LegitKillaura extends Module {
     private void updatePing() {
         long now = System.currentTimeMillis();
         if (now - lastPingUpdate > 1000) {
-            if (mc.getNetworkHandler() != null) {
-                cachedPing = mc.getNetworkHandler().getPing();
+            if (mc.getNetworkHandler() != null && mc.player != null) {
+                var entry = mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
+                if (entry != null) {
+                    cachedPing = entry.getLatency();
+                }
             }
             lastPingUpdate = now;
         }
