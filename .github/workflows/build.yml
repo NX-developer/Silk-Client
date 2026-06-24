@@ -48,14 +48,14 @@ jobs:
 
       - name: Upload error.txt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: error-report
           path: error.txt
 
       - name: Upload build artifacts
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mod-artifacts
           path: build/libs/
